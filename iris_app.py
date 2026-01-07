@@ -4,8 +4,6 @@ import numpy as np
 import pandas as pd
 # Load trained model and label encoder
 model = pickle.load(open("model.pkl", "rb"))
-
-with open("label_encoder.pkl", "rb") as f:
 le = pickle.load(open("iris_model.pkl", "rb"))
 
 
@@ -47,4 +45,5 @@ st.write(f"🌼 The predicted Iris species is **{prediction[0]}**")
 st.subheader("Prediction Probability")
 
 st.write(prediction_proba)
+
 
