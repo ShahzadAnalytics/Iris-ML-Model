@@ -1,13 +1,12 @@
 import streamlit as st
 import numpy as np
 import pickle
-import joblib
 import pandas as pd
 
 # -----------------------------
 # Load trained model and label encoder
 # -----------------------------
-model = joblib.load(open("model.joblib"))
+model = pickle.load(open("model.pkl", "rb"))
 label_encoder = pickle.load(open("label_encoder.pkl", "rb"))
 
 # -----------------------------
@@ -51,4 +50,3 @@ if st.button("Predict Iris Species"):
     
     st.subheader("Prediction Probability")
     st.write(proba_df)
-
