@@ -37,12 +37,16 @@ features, input_data = user_input_features()
 prediction = model.predict(features)
 prediction_proba = model.predict_proba(features)
 
+# Decode prediction
+predicted_class = le.inverse_transform(prediction)
+
 # Display results
 st.subheader("Input Features")
 st.write(input_data)
 
 st.subheader("Prediction")
-st.write(f"🌼 The predicted Iris species is **{prediction[0]}**")
+st.write(f"🌼 The predicted Iris species is **{predicted_class[0]}**")
 
 st.subheader("Prediction Probability")
-st.write(prediction_proba)
+proba_df = pd.DataFrame(prediction_proba, columns=le.classes_)
+st.write(proba_df)
