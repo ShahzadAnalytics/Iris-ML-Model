@@ -1,10 +1,12 @@
 import streamlit as st
 import pickle
+import joblib
 import numpy as np
 import pandas as pd
 # Load trained model and label encoder
-model = pickle.load(open("model.pkl", "rb"))
-le = pickle.load(open("iris_model.pkl", "rb"))
+model = joblib.load(open("model.joblib", "rb"))
+
+le = pickle.load(open("label_encoder.pkl", "rb"))
 
 
 # App title
@@ -43,7 +45,4 @@ st.subheader("Prediction")
 st.write(f"🌼 The predicted Iris species is **{prediction[0]}**")
 
 st.subheader("Prediction Probability")
-
 st.write(prediction_proba)
-
-
