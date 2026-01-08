@@ -1,52 +1,53 @@
 import streamlit as st
-import numpy as np
 import pickle
+import joblib
+import numpy as np
 import pandas as pd
 
-# -----------------------------
-# Load trained model and label encoder
-# -----------------------------
-model = pickle.load(open("model.pkl", "rb"))
-label_encoder = pickle.load(open("label_encoder.pkl", "rb"))
+# ------------------ Load model and label encoder ------------------
+model = joblib.load("model.pkl")
+le = pickle.load(open("label_encoder.pkl", "rb"))
 
-# -----------------------------
-# App title
-# -----------------------------
+# ------------------ App title ------------------
 st.title("🌸 Iris Flower Prediction App")
+st.write("""
+This app predicts the **Iris flower species** based on sepal and petal measurements.
+""")
 
-# -----------------------------
-# User Inputs (MAIN PAGE)
-# -----------------------------
-sepal_length = st.number_input("Sepal Length (cm)", min_value=4.0, max_value=8.0, value=5.1)
-sepal_width  = st.number_input("Sepal Width (cm)", min_value=2.0, max_value=4.5, value=3.5)
-petal_length = st.number_input("Petal Length (cm)", min_value=1.0, max_value=7.0, value=1.4)
-petal_width  = st.number_input("Petal Width (cm)", min_value=0.1, max_value=2.5, value=0.2)
-
-# -----------------------------
-# Predict button
-# -----------------------------
-if st.button("Predict Iris Species"):
+# ------------------ Sidebar: User input ------------------
+st.sidebar.header("Input Features")
+def user_input_features():
+    sepal_length = st.sidebar.slider("Sepal Length (cm)", 4.0, 8.0, 5.0)
+    sepal_width = st.sidebar.slider("Sepal Width (cm)", 2.0, 4.5, 3.0)
+    petal_length = st.sidebar.slider("Petal Length (cm)", 1.0, 7.0, 4.0)
+    petal_width = st.sidebar.slider("Petal Width (cm)", 0.1, 2.5, 1.0)
     
-    # Prepare input
+    # Dictionary for displaying user input
+    data = {
+        "Sepal Length": sepal_length,
+        "Sepal Width": sepal_width,
+        "Petal Length": petal_length,
+        "Petal Width": petal_width
+    }
+    
+    # Features for prediction
     features = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
-    
-    # Prediction
-    prediction = model.predict(features)
-    prediction_proba = model.predict_proba(features)
-    
-    # Decode class
-    predicted_species = label_encoder.inverse_transform(prediction)[0]
-    
-    # -----------------------------
-    # Display Results
-    # -----------------------------
-    st.success(f"🌼 Predicted Iris Species: **{predicted_species}**")
-    
-    # Probability table
-    proba_df = pd.DataFrame(
-        prediction_proba,
-        columns=label_encoder.classes_
-    )
-    
-    st.subheader("Prediction Probability")
-    st.write(proba_df)
+    return features, data
+
+features, input_data = user_input_features()
+
+# ------------------ Make prediction ------------------
+prediction = model.predict(features)
+species_name = le.inverse_transform(prediction)[0]  # Convert numeric to species
+prediction_proba = model.predict_proba(features)
+
+# ------------------ Display results ------------------
+st.subheader("Input Features")
+st.write(input_data)
+
+st.subheader("Prediction")
+st.write(f"🌼 The predicted Iris species is **{species_name}**")
+
+st.subheader("Prediction Probability")
+proba_df = pd.DataFrame(prediction_proba, columns=le.classes_)
+st.write(proba_df)
