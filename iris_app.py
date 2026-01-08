@@ -31,8 +31,11 @@ def user_input_features():
     }
     
     # Features for prediction
-    features = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
-    return features, data
+features = pd.DataFrame(
+    [[sepal_length, sepal_width, petal_length, petal_width]],
+    columns=['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+)
+
 
 features, input_data = user_input_features()
 
@@ -51,3 +54,4 @@ st.write(f"🌼 The predicted Iris species is **{species_name}**")
 st.subheader("Prediction Probability")
 proba_df = pd.DataFrame(prediction_proba, columns=le.classes_)
 st.write(proba_df)
+
